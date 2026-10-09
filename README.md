@@ -1,2 +1,5 @@
-# Project_BasisData-A_Kelompok_Dahlah-terserah
-Project Mata Kuliah Basis Data by Kelompok Dahlah terserah
+# PROJECT BASIS DATA
+## By Kelompok Dahlah terserah
+### Judul: Toko Gadget Online
+Deskripsi:  
+Toko Online Gadget
