@@ -161,6 +161,7 @@ Beberapa kebutuhan pengguna dalam sistem ini adalah:
 | `alamat` | Alamat pelanggan |
 | `no_telepon` | Nomor telepon pelanggan |
 | `email` | Email pelanggan |
+| `password` | Password pelanggan |
 
 ### 8.6 Tabel Transaksi Penjualan
 
