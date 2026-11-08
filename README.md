@@ -139,6 +139,7 @@ Beberapa kebutuhan pengguna dalam sistem ini adalah:
 | `nama_produk` | Nama produk |
 | `harga` | Harga produk |
 | `stok` | Jumlah stok produk |
+| `foto_produk` | Foto produk |
 | `id_merek` | Foreign Key ke tabel Merek |
 | `id_kategori` | Foreign Key ke tabel Kategori |
 
@@ -161,6 +162,7 @@ Beberapa kebutuhan pengguna dalam sistem ini adalah:
 | `alamat` | Alamat pelanggan |
 | `no_telepon` | Nomor telepon pelanggan |
 | `email` | Email pelanggan |
+| `username` | Username untuk akses sistem |
 | `password` | Password pelanggan |
 
 ### 8.6 Tabel Transaksi Penjualan
