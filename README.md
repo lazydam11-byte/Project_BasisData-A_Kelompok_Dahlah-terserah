@@ -46,7 +46,6 @@ Tabel yang digunakan dalam sistem ini meliputi:
 7. Detail Penjualan
 8. Garansi
 9. Klaim Garansi
-10. Tukar Tambah
 
 Tabel Transaksi Penjualan menyimpan informasi transaksi, sedangkan Detail Penjualan menyimpan daftar produk dalam setiap transaksi. Tabel Garansi menyimpan informasi garansi produk yang terjual, dan Klaim Garansi menyimpan riwayat klaim atas garansi tersebut. Sementara itu, tabel Tukar Tambah menyimpan informasi barang lama yang ditukarkan pelanggan dalam suatu transaksi.
 
@@ -66,7 +65,6 @@ Beberapa kebutuhan pengguna dalam sistem ini adalah:
 - Sebagai pegawai, saya ingin mencatat produk yang dibeli pelanggan dalam satu transaksi.
 - Sebagai pegawai, saya ingin mencatat garansi produk yang terjual agar masa berlakunya jelas.
 - Sebagai pegawai, saya ingin mencatat klaim garansi dan memperbarui statusnya sampai selesai.
-- Sebagai pegawai, saya ingin mencatat barang lama dan nilai tukarnya saat pelanggan melakukan tukar tambah.
 - Sebagai pengelola toko, saya ingin menyimpan data produk, kategori, dan merek agar stok serta harga dapat dikelola.
 - Sebagai pengelola toko, saya ingin menyimpan data pelanggan dan pegawai.
 - Sebagai pemilik toko, saya ingin melihat data penjualan, garansi, dan klaim untuk mengetahui kondisi usaha.
@@ -81,7 +79,6 @@ Beberapa kebutuhan pengguna dalam sistem ini adalah:
 - Data pegawai.
 - Data transaksi penjualan dan detail penjualan.
 - Data garansi dan klaim garansi.
-- Data tukar tambah.
 - Relasi antar tabel.
 
 ### 6.2 Yang Tidak Termasuk dalam Sistem
@@ -111,7 +108,6 @@ Beberapa kebutuhan pengguna dalam sistem ini adalah:
 | FR-12 | Sistem dapat mencatat klaim garansi beserta tanggal klaim, keluhan, kondisi barang, dan pegawai yang menangani. |
 | FR-13 | Sistem dapat mencatat status klaim, tanggal selesai, dan keterangan penanganan klaim. |
 | FR-14 | Sistem dapat mencatat tukar tambah pada suatu transaksi, meliputi nama barang lama, jenis, kondisi, nilai tukar, pegawai yang memproses, dan status tukar tambah. |
-| FR-15 | Sistem dapat menghitung tambahan pembayaran tukar tambah berdasarkan total pembayaran dikurangi nilai tukar. |
 | FR-16 | Sistem dapat menyediakan data untuk laporan penjualan. |
 
 ## 8. Struktur Tabel Database
@@ -140,8 +136,11 @@ Beberapa kebutuhan pengguna dalam sistem ini adalah:
 | `harga` | Harga produk |
 | `stok` | Jumlah stok produk |
 | `foto_produk` | Foto produk |
+| `tanggal_masuk` | Tanggal masuk produk |
+| `lama_garansi` | Lama garansi produk |
 | `id_merek` | Foreign Key ke tabel Merek |
 | `id_kategori` | Foreign Key ke tabel Kategori |
+
 
 ### 8.4 Tabel Pegawai
 
@@ -215,21 +214,6 @@ Beberapa kebutuhan pengguna dalam sistem ini adalah:
 | `status_klaim` | Status penanganan klaim |
 | `keterangan` | Keterangan penanganan klaim |
 
-### 8.10 Tabel Tukar Tambah
-
-| Atribut | Keterangan |
-|---|---|
-| `id_tukar_tambah` | Primary Key |
-| `id_transaksi` | Foreign Key ke tabel Transaksi Penjualan |
-| `id_pegawai` | Foreign Key ke tabel Pegawai |
-| `tanggal` | Tanggal tukar tambah |
-| `nama_barang_lama` | Nama barang yang ditukarkan |
-| `jenis_barang_lama` | Jenis barang lama |
-| `kondisi_barang` | Kondisi barang lama |
-| `nilai_tukar` | Nilai barang lama yang disepakati |
-| `tambahan_bayar` | Atribut turunan dari total pembayaran dikurangi nilai tukar |
-| `status_tukar_tambah` | Status tukar tambah |
-
 ## 9. Relasi Antar Tabel
 
 | Relasi | Kardinalitas | Keterangan |
@@ -243,8 +227,6 @@ Beberapa kebutuhan pengguna dalam sistem ini adalah:
 | Detail Penjualan – Garansi | 1:0..1 | Satu detail penjualan dapat memperoleh paling banyak satu garansi. |
 | Garansi – Klaim Garansi | 1:N | Satu garansi dapat memiliki banyak riwayat klaim. |
 | Pegawai – Klaim Garansi | 1:N | Satu pegawai dapat menangani banyak klaim. |
-| Transaksi Penjualan – Tukar Tambah | 1:N | Satu transaksi dapat terkait dengan tukar tambah. |
-| Pegawai – Tukar Tambah | 1:N | Satu pegawai dapat memproses banyak tukar tambah. |
 
 Produk yang dibeli dalam satu transaksi disimpan pada tabel Detail Penjualan karena satu transaksi dapat memiliki beberapa produk. Pelanggan tidak dihubungkan langsung dengan Klaim Garansi dan Tukar Tambah. Data pelanggan dapat ditelusuri melalui Transaksi Penjualan agar tidak terjadi pengulangan data.
 
@@ -260,16 +242,7 @@ Produk yang dibeli dalam satu transaksi disimpan pada tabel Detail Penjualan kar
 6. Garansi dicatat apabila produk memiliki garansi.
 7. Total pembayaran dihitung dari seluruh subtotal.
 
-### 10.2 Proses Tukar Tambah
-
-1. Pelanggan menyerahkan barang lama.
-2. Pegawai memeriksa kondisi barang.
-3. Nilai tukar barang ditentukan.
-4. Data barang lama dan nilai tukar dicatat pada tabel Tukar Tambah.
-5. Data tukar tambah dihubungkan dengan transaksi penjualan.
-6. Tambahan pembayaran dihitung dari total pembayaran dikurangi nilai tukar.
-
-### 10.3 Proses Klaim Garansi
+### 10.2 Proses Klaim Garansi
 
 1. Pelanggan membawa barang yang mengalami kerusakan.
 2. Pegawai memeriksa informasi garansi.
@@ -319,8 +292,7 @@ Struktur utama terdiri dari sepuluh tabel, yaitu Kategori, Merek, Produk, Pegawa
 - Kesalahan dalam menentukan relasi antar tabel.
 - Kesalahan dalam menentukan Primary Key dan Foreign Key.
 - Data yang dimasukkan tidak sesuai dengan struktur tabel.
-- Nilai atribut turunan, seperti `total_bayar`, `sub_total`, `tanggal_berakhir`, dan `tambahan_bayar`, tidak sinkron dengan data sumbernya.
-- Pencatatan tukar tambah tidak konsisten dengan total pembayaran transaksi.
+- Nilai atribut turunan, seperti `total_bayar`, `sub_total`, dan `tanggal_berakhir` tidak sinkron dengan data sumbernya.
 
 ### 14.2 Asumsi
 
@@ -328,10 +300,6 @@ Struktur utama terdiri dari sepuluh tabel, yaitu Kategori, Merek, Produk, Pegawa
 - Setiap transaksi memiliki `id_transaksi`.
 - Satu transaksi dapat memiliki lebih dari satu produk.
 - Garansi dicatat per baris Detail Penjualan, dan satu baris detail memperoleh paling banyak satu garansi.
-- `total_bayar` dihitung dari jumlah subtotal sebelum dikurangi nilai tukar.
-- `tambahan_bayar` dihitung dari `total_bayar` dikurangi `nilai_tukar`.
-- Tukar tambah selalu terkait dengan suatu transaksi, dan pelanggannya mengikuti pelanggan pada transaksi tersebut.
-- Barang lama hasil tukar tambah hanya dicatat sebagai data tukar tambah dan tidak masuk ke stok produk.
 - Data pelanggan dan pegawai sudah tersedia saat transaksi dilakukan.
 
 ## 15. Kriteria Keberhasilan
@@ -342,7 +310,7 @@ Sistem dianggap sesuai apabila:
 - Primary Key dan Foreign Key sudah ditentukan.
 - Relasi antar tabel sesuai dengan kebutuhan sistem.
 - Data transaksi dan detail produk dalam transaksi dapat disimpan.
-- Garansi, klaim garansi, dan tukar tambah dapat dicatat serta ditelusuri dari transaksi asalnya.
+- Garansi dab klaim garansi dapat dicatat serta ditelusuri dari transaksi asalnya.
 - Struktur database sesuai dengan model relasional dan ERD.
 
 ## 16. Persetujuan Pemangku Kepentingan
@@ -351,4 +319,4 @@ PRD ini dibuat sebagai rancangan kebutuhan untuk sistem basis data penjualan, ga
 
 ## 17. Kesimpulan
 
-Sistem basis data ini dibuat untuk membantu mengelola data produk, pelanggan, pegawai, transaksi penjualan, garansi, klaim garansi, dan tukar tambah. Dengan hubungan antar tabel yang jelas, data transaksi dapat disimpan secara lebih terstruktur, riwayat garansi dan klaim dapat ditelusuri, serta data dapat digunakan untuk kebutuhan pengelolaan dan laporan penjualan.
+Sistem basis data ini dibuat untuk membantu mengelola data produk, pelanggan, pegawai, transaksi penjualan, garansi, dan klaim garansi. Dengan hubungan antar tabel yang jelas, data transaksi dapat disimpan secara lebih terstruktur, riwayat garansi dan klaim dapat ditelusuri, serta data dapat digunakan untuk kebutuhan pengelolaan dan laporan penjualan.
