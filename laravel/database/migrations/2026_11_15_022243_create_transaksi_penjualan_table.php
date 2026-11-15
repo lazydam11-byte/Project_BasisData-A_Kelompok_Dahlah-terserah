@@ -13,7 +13,8 @@ return new class extends Migration
             $table->dateTime('tanggal');
             $table->string('metode_pembayaran', 30);
             $table->string('status_pembayaran', 30)->default('Belum Dibayar');
-            $table->unsignedBigInteger('total_bayar')->default(0); // hasil jumlah seluruh subtotal
+            $table->unsignedBigInteger('total_bayar')->default(0); 
+            $table->string('bukti_pembayaran')->nullable();   // hasil jumlah seluruh subtotal
             $table->foreignId('id_pelanggan')->constrained('pelanggan', 'id_pelanggan');
             // Kosong saat pesanan dibuat lewat web; terisi saat pegawai memproses
             $table->foreignId('id_pegawai')->nullable()->constrained('pegawai', 'id_pegawai');

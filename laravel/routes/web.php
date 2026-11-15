@@ -13,6 +13,9 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PegawaiController;
 use App\Http\Controllers\Admin\PelangganController; 
 use App\Http\Controllers\DashboardPelangganController;
+use App\Http\Controllers\KeranjangController;
+use App\Http\Controllers\PesananController;
+use App\Http\Controllers\Admin\TransaksiController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -68,4 +71,24 @@ Route::middleware('auth:pegawai')->prefix('admin')->name('admin.')->group(functi
     Route::middleware(CekJabatan::class . ':' . implode(',', Pegawai::KELOLA_PELANGGAN))->group(function () {
         Route::resource('pelanggan', PelangganController::class)->except(['show', 'destroy']);
     });
+
+    Route::middleware(CekJabatan::class . ':' . implode(',', Pegawai::KELOLA_TRANSAKSI))->group(function () {
+        Route::resource('transaksi', \App\Http\Controllers\Admin\TransaksiController::class)->only(['index', 'show', 'update']);
+    });
 });
+
+        // Keranjang (publik)
+    Route::get('/keranjang', [KeranjangController::class, 'index'])->name('keranjang.index');
+    Route::post('/keranjang/tambah/{produk}', [KeranjangController::class, 'tambah'])->name('keranjang.tambah');
+    Route::put('/keranjang/{produk}', [KeranjangController::class, 'ubah'])->name('keranjang.ubah');
+    Route::delete('/keranjang/{produk}', [KeranjangController::class, 'hapus'])->name('keranjang.hapus');
+
+    // Pesanan (pelanggan harus login)
+    Route::middleware('auth:pelanggan')->prefix('pesanan')->name('pesanan.')->group(function () {
+        Route::get('/', [PesananController::class, 'index'])->name('index');
+        Route::post('/', [PesananController::class, 'store'])->name('store');
+        Route::get('/{transaksi}', [PesananController::class, 'show'])->name('show');
+        Route::post('/{transaksi}/batal', [PesananController::class, 'batal'])->name('batal');
+        Route::post('/{transaksi}/bukti', [PesananController::class, 'unggahBukti'])->name('bukti');
+    });
+

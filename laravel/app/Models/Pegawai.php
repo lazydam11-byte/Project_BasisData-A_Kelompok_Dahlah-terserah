@@ -15,6 +15,8 @@ class Pegawai extends Authenticatable
 
     public const KELOLA_PELANGGAN = ['Manajer', 'Kasir'];
 
+    public const KELOLA_TRANSAKSI = ['Manajer', 'Kasir'];
+
     protected $table = 'pegawai';
     protected $primaryKey = 'id_pegawai';
 
@@ -39,5 +41,11 @@ class Pegawai extends Authenticatable
         public function bisaKelolaPelanggan(): bool
     {
         return in_array($this->jabatan, self::KELOLA_PELANGGAN, true);
+    }
+
+
+    public function bisaKelolaTransaksi(): bool
+    {
+        return in_array($this->jabatan, self::KELOLA_TRANSAKSI, true);
     }
 }

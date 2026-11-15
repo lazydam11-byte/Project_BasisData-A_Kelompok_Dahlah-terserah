@@ -63,6 +63,12 @@
                     <p class="mt-auto pt-3 text-xs text-slate-500">{{ $p->merek->nama_merek }} · {{ $p->kategori->nama_kategori }}</p>
                     <p class="text-xs text-slate-500">Garansi: {{ $p->text_garansi }}</p>
                     <p class="mt-1 font-display text-xl font-bold text-brand">{{ $p->harga_rupiah }}</p>
+                    @if ($p->stok > 0)
+                    <form method="POST" action="{{ route('keranjang.tambah', $p) }}" class="mt-3">
+                        @csrf
+                        <button class="w-full rounded-lg bg-aksen px-3 py-2 text-sm font-semibold text-white hover:opacity-90">Tambah ke keranjang</button>
+                    </form>
+                    @endif
                 </div>
             </article>
         @endforeach

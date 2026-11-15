@@ -11,7 +11,7 @@ class PelangganLoginController extends Controller
     public function showLoginForm()
     {
         if (Auth::guard('pelanggan')->check()) {
-            return redirect()->route('katalog');
+            return redirect()->route('katalog.index');
         }
 
         return view('auth.pelanggan-login');
@@ -30,7 +30,7 @@ class PelangganLoginController extends Controller
         if (Auth::guard('pelanggan')->attempt($kredensial)) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('katalog'));
+            return redirect()->intended(route('katalog.index'));
         }
 
         return back()
@@ -43,6 +43,6 @@ class PelangganLoginController extends Controller
         Auth::guard('pelanggan')->logout();
         $request->session()->regenerateToken();
 
-        return redirect()->route('katalog');
+        return redirect()->route('katalog.index');
     }
 }
