@@ -1,11 +1,18 @@
 <?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\MerekController;
+use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\ProdukController;
 use App\Http\Controllers\Auth\PegawaiLoginController;
 use App\Http\Controllers\Auth\PelangganLoginController;
 use App\Http\Controllers\KatalogController;
 use App\Http\Middleware\CekJabatan;
 use App\Models\Pegawai;
-
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PegawaiController;
+use App\Http\Controllers\Admin\PelangganController; 
+use App\Http\Controllers\DashboardPelangganController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,11 +25,19 @@ use App\Models\Pegawai;
 */
 // ---------- Pembeli ----------
 
+
+
 Route::get('/', fn () => redirect()->route('pegawai.login'));
-Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog');
+// ---------- Pembeli ----------
+Route::get('/', fn() => redirect()->route('pegawai.login'));
+Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog.index');
 Route::get('/login', [PelangganLoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [PelangganLoginController::class, 'login'])->name('login.proses');
 Route::post('/logout', [PelangganLoginController::class, 'logout'])->name('logout');
+
+//Dashboard
+Route::get('/', [DashboardPelangganController::class, 'index'])->name('beranda');
+
 
 // ---------- Pegawai ----------
 Route::get('/pegawai/login', [PegawaiLoginController::class, 'showLoginForm'])->name('pegawai.login');
@@ -30,13 +45,27 @@ Route::post('/pegawai/login', [PegawaiLoginController::class, 'login'])->name('p
 Route::post('/pegawai/logout', [PegawaiLoginController::class, 'logout'])->name('pegawai.logout');
 
 Route::middleware('auth:pegawai')->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', fn () => redirect()->route('admin.produk.index'))->name('dashboard');
+    Route::get('/', fn () => redirect()->route('admin.dashboard'));
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Semua pegawai boleh melihat daftar produk
+    // Semua pegawai boleh melihat daftar
     Route::resource('produk', ProdukController::class)->only(['index']);
-
+    Route::resource('kategori', KategoriController::class)->only(['index']);
+    Route::resource('merek', MerekController::class)->only(['index']);
     // Hanya Manajer & Gudang yang boleh tambah / ubah / hapus
     Route::middleware(CekJabatan::class . ':' . implode(',', Pegawai::KELOLA_PRODUK))->group(function () {
         Route::resource('produk', ProdukController::class)->except(['index', 'show']);
+        Route::resource('kategori', KategoriController::class)->except(['index', 'show']);
+        Route::resource('merek', MerekController::class)->except(['index', 'show']);
+    });
+
+    // Hanya Manajer yang boleh mengelola pegawai
+    Route::middleware(CekJabatan::class . ':' . implode(',', Pegawai::KELOLA_PEGAWAI))->group(function () {
+        Route::resource('pegawai', PegawaiController::class)->except(['show']);
+    });
+
+        // Manajer & Kasir: lihat, tambah, ubah pelanggan (tanpa hapus)
+    Route::middleware(CekJabatan::class . ':' . implode(',', Pegawai::KELOLA_PELANGGAN))->group(function () {
+        Route::resource('pelanggan', PelangganController::class)->except(['show', 'destroy']);
     });
 });

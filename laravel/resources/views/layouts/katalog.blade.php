@@ -8,7 +8,17 @@
 <body class="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans">
     <header class="bg-brand text-white">
         <div class="mx-auto max-w-7xl px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2">
-            <a href="{{ route('katalog') }}" class="font-display font-bold text-lg">Gadgetkuori.com</a>
+            <a href="{{ route('beranda') }}" class="font-display font-bold text-lg">Gadgetkuori.com</a>
+
+            <nav aria-label="Menu utama" class="flex items-center gap-1 text-sm">
+                <a href="{{ route('beranda') }}"
+                   @if (request()->routeIs('beranda')) aria-current="page" @endif
+                   class="rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white {{ request()->routeIs('beranda') ? 'bg-white/20 font-semibold' : 'hover:bg-white/10' }}">Beranda</a>
+                <a href="{{ route('katalog.index') }}"
+                   @if (request()->routeIs('katalog.*')) aria-current="page" @endif
+                   class="rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white {{ request()->routeIs('katalog.*') ? 'bg-white/20 font-semibold' : 'hover:bg-white/10' }}">Produk</a>
+            </nav>
+
             <div class="ml-auto flex items-center gap-3 text-sm">
                 @if ($pelanggan)
                     <span class="font-semibold">{{ $pelanggan->nama }}</span>

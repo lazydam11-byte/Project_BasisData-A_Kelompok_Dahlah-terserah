@@ -46,7 +46,7 @@
     <div class="rounded-xl border border-slate-200 bg-white p-10 text-center">
         <h2 class="font-display text-xl font-bold">Produk tidak ditemukan</h2>
         <p class="mt-1 text-sm text-slate-500">Coba kata kunci lain atau hapus filter kategori dan merek.</p>
-        <a href="{{ route('katalog') }}" class="mt-4 inline-block rounded-lg border border-brand px-4 py-2 text-sm font-semibold text-brand hover:bg-brand-soft">Hapus Pencarian & Filter</a>
+        <a href="{{ route('katalog.index') }}" class="mt-4 inline-block rounded-lg border border-brand px-4 py-2 text-sm font-semibold text-brand hover:bg-brand-soft">Hapus Pencarian & Filter</a>
     </div>
 @else
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

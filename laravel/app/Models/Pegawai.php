@@ -11,6 +11,10 @@ class Pegawai extends Authenticatable
     /** Jabatan yang boleh tambah / ubah / hapus produk. */
     public const KELOLA_PRODUK = ['Manajer', 'Gudang'];
 
+    public const KELOLA_PEGAWAI = ['Manajer'];
+
+    public const KELOLA_PELANGGAN = ['Manajer', 'Kasir'];
+
     protected $table = 'pegawai';
     protected $primaryKey = 'id_pegawai';
 
@@ -23,5 +27,17 @@ class Pegawai extends Authenticatable
     public function bisaKelolaProduk(): bool
     {
         return in_array($this->jabatan, self::KELOLA_PRODUK, true);
+    }
+
+    /** Jabatan yang boleh mengelola data pegawai. */
+
+    public function bisaKelolaPegawai(): bool
+    {
+        return in_array($this->jabatan, self::KELOLA_PEGAWAI, true);
+    }
+
+        public function bisaKelolaPelanggan(): bool
+    {
+        return in_array($this->jabatan, self::KELOLA_PELANGGAN, true);
     }
 }

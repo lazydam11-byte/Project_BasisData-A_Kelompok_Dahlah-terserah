@@ -7,8 +7,8 @@
 <body class="min-h-screen flex flex-col bg-brand-soft/40 font-sans text-slate-800">
     <header class="bg-brand text-white">
         <div class="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
-            <a href="{{ route('katalog') }}" class="font-display font-bold text-lg">Gadgetkuori.com</a>
-            <a href="{{ route('katalog') }}" class="rounded border border-white/60 px-3 py-1.5 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white">Kembali ke beranda</a>
+            <a href="{{ route('katalog.index') }}" class="font-display font-bold text-lg">Gadgetkuori.com</a>
+            <a href="{{ route('katalog.index') }}" class="rounded border border-white/60 px-3 py-1.5 text-sm hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white">Kembali ke beranda</a>
         </div>
     </header>
 
@@ -52,7 +52,7 @@
             </form>
 
             <div class="my-4 flex items-center gap-3 text-xs text-slate-400"><hr class="flex-1"><span>atau</span><hr class="flex-1"></div>
-            <a href="{{ route('katalog') }}" class="block w-full rounded-lg border border-brand py-2.5 text-center font-semibold text-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand">Lanjut sebagai tamu</a>
+            <a href="{{ route('katalog.index') }}" class="block w-full rounded-lg border border-brand py-2.5 text-center font-semibold text-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand">Lanjut sebagai tamu</a>
             <p class="mt-2 text-center text-xs text-slate-500">Katalog dan informasi stok dapat dilihat tanpa masuk.</p>
         </section>
     </main>
