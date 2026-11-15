@@ -14,8 +14,14 @@ class Produk extends Model
     protected $primaryKey = 'id_produk';
 
     protected $fillable = [
-        'id_kategori', 'id_merek', 'nama_produk', 'harga',
-        'stok', 'lama_garansi', 'tanggal_masuk', 'foto_produk',
+        'id_kategori',
+        'id_merek',
+        'nama_produk',
+        'harga',
+        'stok',
+        'lama_garansi',
+        'tanggal_masuk',
+        'foto_produk',
     ];
 
     protected $casts = [
@@ -54,7 +60,7 @@ class Produk extends Model
 
     public function getFotoUrlAttribute(): ?string
     {
-        return $this->foto_produk ? asset('storage/' . $this->foto_produk) : null;
+        return $this->foto_produk ? url('media/' . $this->foto_produk) : null;
     }
 
     public function getTextGaransiAttribute(): string
@@ -74,4 +80,3 @@ class Produk extends Model
         return ['Stok tersedia · ' . $this->stok . ' unit', 'bg-green-100 text-green-800'];
     }
 }
-

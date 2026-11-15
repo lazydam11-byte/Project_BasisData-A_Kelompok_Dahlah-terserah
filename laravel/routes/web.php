@@ -1,21 +1,33 @@
 <?php
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\MerekController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\ProdukController;
 use App\Http\Controllers\Auth\PegawaiLoginController;
+use App\Http\Controllers\Auth\PelangganRegisterController;
 use App\Http\Controllers\Auth\PelangganLoginController;
 use App\Http\Controllers\KatalogController;
 use App\Http\Middleware\CekJabatan;
 use App\Models\Pegawai;
 
 // ---------- Pembeli ----------
+Route::get('/daftar', [PelangganRegisterController::class, 'showRegisterForm'])->name('daftar');
+Route::post('/daftar', [PelangganRegisterController::class, 'register'])->middleware('throttle:10,1')->name('daftar.proses');
 Route::get('/', fn() => redirect()->route('pegawai.login'));
 Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog');
 Route::get('/login', [PelangganLoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [PelangganLoginController::class, 'login'])->name('login.proses');
 Route::post('/logout', [PelangganLoginController::class, 'logout'])->name('logout');
+
+
+// ---------- Media ----------
+Route::get('/media/{path}', function (string $path) {
+    abort_unless(str_starts_with($path, 'produk/') && Storage::disk('public')->exists($path), 404);
+
+    return Storage::disk('public')->response($path);
+})->where('path', '.*')->name('media');
 
 // ---------- Pegawai ----------
 Route::get('/pegawai/login', [PegawaiLoginController::class, 'showLoginForm'])->name('pegawai.login');

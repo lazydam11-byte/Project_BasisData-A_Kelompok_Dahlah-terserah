@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PelangganLoginController extends Controller
 {
@@ -19,11 +20,14 @@ class PelangganLoginController extends Controller
 
     public function login(Request $request)
     {
+        $request->merge(['email' => Str::lower(trim((string) $request->input('email')))]);
+
         $kredensial = $request->validate([
-            'username' => ['required', 'string'],
+            'email' => ['required', 'email'],
             'password' => ['required', 'string'],
         ], [
-            'username.required' => 'Username wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
             'password.required' => 'Password wajib diisi.',
         ]);
 
@@ -34,8 +38,8 @@ class PelangganLoginController extends Controller
         }
 
         return back()
-            ->withErrors(['login' => 'Username atau password tidak valid. Periksa kembali, lalu tekan Masuk untuk mencoba lagi.'])
-            ->onlyInput('username');
+            ->withErrors(['login' => 'Email atau password tidak valid. Periksa kembali, lalu tekan Masuk untuk mencoba lagi.'])
+            ->onlyInput('email');
     }
 
     public function logout(Request $request)
