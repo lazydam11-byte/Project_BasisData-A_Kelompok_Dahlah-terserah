@@ -46,6 +46,15 @@ class PesananController extends Controller
     {
         $data = $request->validate([
             'metode_pembayaran' => ['required', Rule::in(TransaksiPenjualan::METODE)],
+            'nama_penerima'     => ['required', 'string', 'max:100'],
+            'telepon_penerima'  => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s]+$/'],
+            'alamat_pengiriman' => ['required', 'string', 'min:10', 'max:500'],
+        ], [
+            'nama_penerima.required'     => 'Isi nama penerima.',
+            'telepon_penerima.required'  => 'Isi nomor telepon penerima.',
+            'telepon_penerima.regex'     => 'Nomor telepon hanya boleh berisi angka, +, -, dan spasi.',
+            'alamat_pengiriman.required' => 'Isi alamat pengiriman.',
+            'alamat_pengiriman.min'      => 'Alamat terlalu singkat. Tulis lengkap dengan jalan, kelurahan, kota, dan kode pos.',
         ]);
 
         $keranjang = session('keranjang', []);
@@ -94,6 +103,9 @@ class PesananController extends Controller
                     'status_pembayaran' => TransaksiPenjualan::BELUM_DIBAYAR,
                     'total_bayar'       => $total,
                     'id_pelanggan'      => auth('pelanggan')->id(),
+                    'nama_penerima'     => $data['nama_penerima'],
+                    'telepon_penerima'  => $data['telepon_penerima'],
+                    'alamat_pengiriman' => $data['alamat_pengiriman'],
                 ]);
 
                 $transaksi->detail()->createMany($baris);
@@ -135,6 +147,20 @@ class PesananController extends Controller
         $transaksi->update(['bukti_pembayaran' => $path]);
 
         return back()->with('sukses', 'Bukti pembayaran berhasil diunggah. Pegawai akan memeriksanya.');
+    }
+
+    /** Pelanggan mengonfirmasi pesanan sudah diterima. */
+    public function terima(TransaksiPenjualan $transaksi)
+    {
+        $this->pastikanMilikSendiri($transaksi);
+
+        if (! $transaksi->bisaDiterima()) {
+            return back()->with('error', 'Pesanan ini belum dikirim, atau sudah dikonfirmasi diterima.');
+        }
+
+        $transaksi->update(['status_pengiriman' => TransaksiPenjualan::KIRIM_DITERIMA]);
+
+        return back()->with('sukses', 'Terima kasih! Pesanan ditandai sudah diterima.');
     }
 
     public function batal(TransaksiPenjualan $transaksi)

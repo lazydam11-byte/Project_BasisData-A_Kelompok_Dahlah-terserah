@@ -57,6 +57,26 @@
             @auth('pelanggan')
                 <form method="POST" action="{{ route('pesanan.store') }}" class="mt-4">
                     @csrf
+
+                    <h3 class="mb-2 text-xs font-semibold text-slate-600">Alamat pengiriman</h3>
+                    <div class="mb-4 space-y-3">
+                        <div>
+                            <label for="nama_penerima" class="mb-1 block text-xs font-semibold">Nama penerima</label>
+                            <input id="nama_penerima" name="nama_penerima" value="{{ old('nama_penerima', auth('pelanggan')->user()->nama) }}" required maxlength="100" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand">
+                            @error('nama_penerima') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label for="telepon_penerima" class="mb-1 block text-xs font-semibold">No. telepon penerima</label>
+                            <input id="telepon_penerima" name="telepon_penerima" value="{{ old('telepon_penerima', auth('pelanggan')->user()->no_telepon) }}" required maxlength="20" inputmode="tel" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand">
+                            @error('telepon_penerima') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label for="alamat_pengiriman" class="mb-1 block text-xs font-semibold">Alamat lengkap</label>
+                            <textarea id="alamat_pengiriman" name="alamat_pengiriman" rows="3" required maxlength="500" placeholder="Jalan, nomor rumah, kelurahan, kecamatan, kota, kode pos" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand">{{ old('alamat_pengiriman', auth('pelanggan')->user()->alamat) }}</textarea>
+                            @error('alamat_pengiriman') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+
                     <label for="metode_pembayaran" class="mb-1 block text-xs font-semibold">Metode pembayaran</label>
                     <select id="metode_pembayaran" name="metode_pembayaran" required class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand">
                         @foreach ($metode as $m)
@@ -66,7 +86,7 @@
                     @error('metode_pembayaran') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
 
                     <button class="mt-4 w-full rounded-lg bg-aksen px-4 py-2.5 text-sm font-semibold text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand">Buat pesanan</button>
-                    <p class="mt-3 text-xs text-slate-500">Pesanan diambil di toko setelah pembayaran dikonfirmasi oleh pegawai.</p>
+                    <p class="mt-3 text-xs text-slate-500">Pesanan dikirim ke alamat di atas setelah pembayaran dikonfirmasi pegawai. Estimasi tiba diberikan oleh pegawai.</p>
                 </form>
             @else
                 <p class="mt-4 text-sm text-slate-600">Masuk dulu untuk membuat pesanan. Isi keranjang Anda tetap tersimpan.</p>

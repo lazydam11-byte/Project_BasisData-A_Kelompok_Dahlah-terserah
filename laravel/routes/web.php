@@ -86,6 +86,7 @@ Route::middleware('auth:pegawai')->prefix('admin')->name('admin.')->group(functi
     });
 
     Route::middleware(CekJabatan::class . ':' . implode(',', Pegawai::KELOLA_TRANSAKSI))->group(function () {
+        Route::put('transaksi/{transaksi}/pengiriman', [\App\Http\Controllers\Admin\TransaksiController::class, 'pengiriman'])->name('transaksi.pengiriman');
         Route::resource('transaksi', \App\Http\Controllers\Admin\TransaksiController::class)->only(['index', 'show', 'update']);
     });
 
@@ -112,6 +113,7 @@ Route::middleware('auth:pegawai')->prefix('admin')->name('admin.')->group(functi
         Route::get('/{transaksi}', [PesananController::class, 'show'])->name('show');
         Route::post('/{transaksi}/batal', [PesananController::class, 'batal'])->name('batal');
         Route::post('/{transaksi}/bukti', [PesananController::class, 'unggahBukti'])->name('bukti');
+        Route::post('/{transaksi}/terima', [PesananController::class, 'terima'])->name('terima');
         
     });
 

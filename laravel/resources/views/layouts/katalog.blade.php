@@ -41,14 +41,16 @@
             </div>
         </div>
     </header>
-
     <main class="flex-1 mx-auto w-full max-w-7xl px-4 py-6">
-        @if (session('success'))
-        <div class="mb-4 rounded-lg border border-green-200 bg-brand-soft px-4 py-3 text-sm text-brand-dark" role="status">{{ session('success') }}</div>
+        @php $pesanSukses = session('success') ?? session('sukses'); @endphp
+        @if ($pesanSukses)
+            <div class="mb-4 rounded-lg border border-green-200 bg-brand-soft px-4 py-3 text-sm text-brand-dark" role="status">{{ $pesanSukses }}</div>
+        @endif
+        @if (session('error'))
+            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">{{ session('error') }}</div>
         @endif
         @yield('content')
     </main>
-
     <footer class="bg-brand text-white/90 text-xs">
         <div class="mx-auto max-w-7xl px-4 py-4 flex flex-wrap justify-between gap-2">
             <span>Gadgetkuori.com Toko Online Gadget Terpercaya</span>

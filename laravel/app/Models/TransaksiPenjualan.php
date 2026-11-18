@@ -13,15 +13,26 @@ class TransaksiPenjualan extends Model
     public const LUNAS = 'Lunas';
     public const DIBATALKAN = 'Dibatalkan';
 
+    public const KIRIM_MENUNGGU = 'Menunggu';
+    public const KIRIM_DIKEMAS  = 'Dikemas';
+    public const KIRIM_DIKIRIM  = 'Dikirim';
+    public const KIRIM_DITERIMA = 'Diterima';
+
     protected $table = 'transaksi_penjualan';
     protected $primaryKey = 'id_transaksi';
 
     protected $fillable = [
         'tanggal', 'metode_pembayaran', 'status_pembayaran',
         'total_bayar', 'bukti_pembayaran', 'id_pelanggan', 'id_pegawai',
+        'nama_penerima', 'telepon_penerima', 'alamat_pengiriman',
+        'status_pengiriman', 'kurir', 'nomor_resi', 'tanggal_kirim', 'estimasi_tiba',
     ];
 
-    protected $casts = ['tanggal' => 'datetime'];
+    protected $casts = [
+        'tanggal'       => 'datetime',
+        'tanggal_kirim' => 'date',
+        'estimasi_tiba' => 'date',
+    ];
 
     public function pelanggan()
     {
@@ -48,6 +59,19 @@ class TransaksiPenjualan extends Model
     public function bisaUnggahBukti(): bool
     {
         return $this->bisaDiproses() && $this->metode_pembayaran !== 'Bayar di Toko';
+    }
+
+    /** Pegawai boleh mengatur pengiriman jika pesanan sudah lunas dan belum diterima pelanggan. */
+    public function bisaDiaturPengirimannya(): bool
+    {
+        return $this->status_pembayaran === self::LUNAS
+            && $this->status_pengiriman !== self::KIRIM_DITERIMA;
+    }
+
+    /** Pelanggan boleh menandai diterima hanya saat pesanan berstatus Dikirim. */
+    public function bisaDiterima(): bool
+    {
+        return $this->status_pengiriman === self::KIRIM_DIKIRIM;
     }
 
     /** Hanya pesanan yang belum dibayar yang masih bisa dikonfirmasi atau dibatalkan. */

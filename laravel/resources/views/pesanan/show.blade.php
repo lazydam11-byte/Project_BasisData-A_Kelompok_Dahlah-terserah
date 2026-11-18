@@ -12,7 +12,7 @@
 
 @if ($transaksi->status_pembayaran === 'Lunas')
     <div class="mb-4 rounded-xl border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-900">
-        Pembayaran sudah dikonfirmasi. Silakan ambil pesanan di toko dengan menyebutkan nomor pesanan.
+        Pembayaran sudah dikonfirmasi. Pesanan akan dikemas dan dikirim ke alamat Anda.
     </div>
 @endif
 
@@ -24,6 +24,47 @@
     </div>
 
     <aside class="space-y-4">
+        {{-- Pengiriman --}}
+        @if ($transaksi->alamat_pengiriman)
+            <section class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <h2 class="mb-2 font-display font-bold">Pengiriman</h2>
+                <dl class="space-y-2 text-sm">
+                    <div>
+                        <dt class="text-xs text-slate-500">Penerima</dt>
+                        <dd class="font-semibold">{{ $transaksi->nama_penerima }} · {{ $transaksi->telepon_penerima }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs text-slate-500">Alamat</dt>
+                        <dd class="whitespace-pre-line">{{ $transaksi->alamat_pengiriman }}</dd>
+                    </div>
+
+                    @if ($transaksi->status_pembayaran === 'Lunas')
+                        <div>
+                            <dt class="text-xs text-slate-500">Status pengiriman</dt>
+                            <dd class="font-semibold">{{ $transaksi->status_pengiriman }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs text-slate-500">Estimasi tiba</dt>
+                            <dd>{{ $transaksi->estimasi_tiba ? $transaksi->estimasi_tiba->format('d/m/Y') : 'Belum ditentukan pegawai' }}</dd>
+                        </div>
+                        @if ($transaksi->kurir || $transaksi->nomor_resi)
+                            <div>
+                                <dt class="text-xs text-slate-500">Kurir dan nomor resi</dt>
+                                <dd>{{ $transaksi->kurir ?: '–' }} · {{ $transaksi->nomor_resi ?: '–' }}</dd>
+                            </div>
+                        @endif
+                    @endif
+                </dl>
+
+                @if ($transaksi->bisaDiterima())
+                    <form method="POST" action="{{ route('pesanan.terima', $transaksi) }}" class="mt-3" onsubmit="return confirm('Konfirmasi pesanan sudah Anda terima?')">
+                        @csrf
+                        <button class="w-full rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">Pesanan sudah saya terima</button>
+                    </form>
+                @endif
+            </section>
+        @endif
+
         {{-- Petunjuk pembayaran --}}
         @if ($transaksi->bisaDiproses())
             <section class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -90,7 +131,7 @@
                         @error('bukti') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                         <button class="mt-3 w-full rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">Kirim bukti</button>
                     </form>
-                    <p class="mt-2 text-xs text-slate-500">Pesanan diambil di toko setelah pegawai mengonfirmasi pembayaran.</p>
+                    <p class="mt-2 text-xs text-slate-500">Pesanan dikirim setelah pegawai mengonfirmasi pembayaran.</p>
                 @endif
             </section>
         @endif
