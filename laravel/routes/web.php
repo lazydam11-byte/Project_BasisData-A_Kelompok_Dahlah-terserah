@@ -1,10 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\MerekController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\ProdukController;
 use App\Http\Controllers\Auth\PegawaiLoginController;
+use App\Http\Controllers\Auth\PelangganRegisterController;
 use App\Http\Controllers\Auth\PelangganLoginController;
 use App\Http\Controllers\KatalogController;
 use App\Http\Middleware\CekJabatan;
@@ -34,6 +36,8 @@ use App\Http\Controllers\Admin\TransaksiController;
 
 Route::get('/', fn () => redirect()->route('pegawai.login'));
 // ---------- Pembeli ----------
+Route::get('/daftar', [PelangganRegisterController::class, 'showRegisterForm'])->name('daftar');
+Route::post('/daftar', [PelangganRegisterController::class, 'register'])->middleware('throttle:10,1')->name('daftar.proses');
 Route::get('/', fn() => redirect()->route('pegawai.login'));
 Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog.index');
 Route::get('/login', [PelangganLoginController::class, 'showLoginForm'])->name('login');
@@ -43,6 +47,13 @@ Route::post('/logout', [PelangganLoginController::class, 'logout'])->name('logou
 //Dashboard
 Route::get('/', [DashboardPelangganController::class, 'index'])->name('beranda');
 
+
+// ---------- Media ----------
+Route::get('/media/{path}', function (string $path) {
+    abort_unless(str_starts_with($path, 'produk/') && Storage::disk('public')->exists($path), 404);
+
+    return Storage::disk('public')->response($path);
+})->where('path', '.*')->name('media');
 
 // ---------- Pegawai ----------
 Route::get('/pegawai/login', [PegawaiLoginController::class, 'showLoginForm'])->name('pegawai.login');
