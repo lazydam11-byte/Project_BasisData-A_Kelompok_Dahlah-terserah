@@ -7,7 +7,7 @@
 <body class="min-h-screen flex flex-col bg-gradient-to-br from-brand-soft to-white font-sans text-slate-800">
     <header class="bg-brand text-white">
         <div class="mx-auto max-w-7xl px-4 py-3 flex items-center gap-6">
-            <a href="{{ route('katalog') }}" class="font-display font-bold text-lg">Gadgetkuori.com</a>
+            <a href="{{ route('katalog.index') }}" class="font-display font-bold text-lg">Gadgetkuori.com</a>
             <span class="text-sm">Sistem Informasi Toko</span>
         </div>
     </header>

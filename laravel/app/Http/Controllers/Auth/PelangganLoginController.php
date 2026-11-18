@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PelangganLoginController extends Controller
 {
     public function showLoginForm()
     {
         if (Auth::guard('pelanggan')->check()) {
-            return redirect()->route('katalog');
+            return redirect()->route('katalog.index');
         }
 
         return view('auth.pelanggan-login');
@@ -19,23 +20,26 @@ class PelangganLoginController extends Controller
 
     public function login(Request $request)
     {
+        $request->merge(['email' => Str::lower(trim((string) $request->input('email')))]);
+
         $kredensial = $request->validate([
-            'username' => ['required', 'string'],
+            'email' => ['required', 'email'],
             'password' => ['required', 'string'],
         ], [
-            'username.required' => 'Username wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
             'password.required' => 'Password wajib diisi.',
         ]);
 
         if (Auth::guard('pelanggan')->attempt($kredensial)) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('katalog'));
+            return redirect()->intended(route('katalog.index'));
         }
 
         return back()
-            ->withErrors(['login' => 'Username atau password tidak valid. Periksa kembali, lalu tekan Masuk untuk mencoba lagi.'])
-            ->onlyInput('username');
+            ->withErrors(['login' => 'Email atau password tidak valid. Periksa kembali, lalu tekan Masuk untuk mencoba lagi.'])
+            ->onlyInput('email');
     }
 
     public function logout(Request $request)
@@ -43,6 +47,6 @@ class PelangganLoginController extends Controller
         Auth::guard('pelanggan')->logout();
         $request->session()->regenerateToken();
 
-        return redirect()->route('katalog');
+        return redirect()->route('katalog.index');
     }
 }
