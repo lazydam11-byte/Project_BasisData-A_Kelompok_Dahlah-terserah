@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Garansi;
 use App\Models\TransaksiPenjualan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class TransaksiController extends Controller
@@ -50,12 +52,17 @@ class TransaksiController extends Controller
         }
 
         if ($aksi === 'lunas') {
-            $transaksi->update([
-                'status_pembayaran' => TransaksiPenjualan::LUNAS,
-                'id_pegawai'        => $idPegawai,
-            ]);
+            // Garansi terbit otomatis bersamaan dengan konfirmasi lunas
+            DB::transaction(function () use ($transaksi, $idPegawai) {
+                $transaksi->update([
+                    'status_pembayaran' => TransaksiPenjualan::LUNAS,
+                    'id_pegawai'        => $idPegawai,
+                ]);
 
-            return back()->with('sukses', 'Pembayaran pesanan #' . $transaksi->id_transaksi . ' dikonfirmasi lunas.');
+                Garansi::terbitkanUntuk($transaksi);
+            });
+
+            return back()->with('sukses', 'Pembayaran pesanan #' . $transaksi->id_transaksi . ' dikonfirmasi lunas dan garansi diterbitkan.');
         }
 
         $transaksi->batalkan($idPegawai);

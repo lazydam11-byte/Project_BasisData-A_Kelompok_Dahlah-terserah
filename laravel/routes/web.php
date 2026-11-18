@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\DashboardPelangganController;
 use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\PesananController;
+use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\GaransiController;
 use App\Http\Controllers\Admin\TransaksiController;
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +77,15 @@ Route::middleware('auth:pegawai')->prefix('admin')->name('admin.')->group(functi
     Route::middleware(CekJabatan::class . ':' . implode(',', Pegawai::KELOLA_TRANSAKSI))->group(function () {
         Route::resource('transaksi', \App\Http\Controllers\Admin\TransaksiController::class)->only(['index', 'show', 'update']);
     });
+
+    Route::middleware(CekJabatan::class . ':' . implode(',', Pegawai::KELOLA_LAPORAN))->group(function () {
+        Route::get('laporan/penjualan', [LaporanController::class, 'penjualan'])->name('laporan.penjualan');
+        Route::get('laporan/penjualan/csv', [LaporanController::class, 'penjualanCsv'])->name('laporan.penjualan.csv');
+    });
+
+    Route::middleware(CekJabatan::class . ':' . implode(',', Pegawai::KELOLA_KLAIM))->group(function () {
+        Route::resource('klaim', \App\Http\Controllers\Admin\KlaimController::class)->only(['index', 'show', 'update']);
+    });
 });
 
         // Keranjang (publik)
@@ -90,5 +101,12 @@ Route::middleware('auth:pegawai')->prefix('admin')->name('admin.')->group(functi
         Route::get('/{transaksi}', [PesananController::class, 'show'])->name('show');
         Route::post('/{transaksi}/batal', [PesananController::class, 'batal'])->name('batal');
         Route::post('/{transaksi}/bukti', [PesananController::class, 'unggahBukti'])->name('bukti');
+        
+    });
+
+    Route::middleware('auth:pelanggan')->prefix('garansi')->name('garansi.')->group(function () {
+        Route::get('/', [GaransiController::class, 'index'])->name('index');
+        Route::get('/{garansi}/klaim', [GaransiController::class, 'formKlaim'])->name('klaim.form');
+        Route::post('/{garansi}/klaim', [GaransiController::class, 'ajukanKlaim'])->name('klaim.store');
     });
 

@@ -42,6 +42,12 @@
                         @endif
                     </a>
                 @endif
+                @if ($pegawai->bisaLihatLaporan())
+                    <a href="{{ route('admin.laporan.penjualan') }}" class="rounded px-3 py-1.5 {{ request()->routeIs('admin.laporan.*') ? 'bg-brand-dark' : 'hover:bg-white/10' }}">Laporan</a>
+                @endif
+                @if ($pegawai->bisaKelolaKlaim())
+                    <a href="{{ route('admin.klaim.index') }}" class="rounded px-3 py-1.5 {{ request()->routeIs('admin.klaim.*') ? 'bg-brand-dark' : 'hover:bg-white/10' }}">Klaim Garansi</a>
+                @endif
             </nav>
             <div class="ml-auto flex items-center gap-3 text-sm">
                 <div class="text-right leading-tight">

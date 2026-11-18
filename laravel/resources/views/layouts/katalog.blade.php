@@ -21,6 +21,8 @@
                 @if ($pelanggan) 
                     <a class="rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white {{ request()->routeIs('pesanan.*') ? 'bg-white/20 font-semibold' : 'hover:bg-white/10' }}" href="{{ route('pesanan.index') }}">Pesanan saya</a> 
                 @endif
+                @if ($pelanggan) <a class="rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white {{ request()->routeIs('garansi.*') ? 'bg-white/20 font-semibold' : 'hover:bg-white/10' }}" href="{{ route('garansi.index') }}">Garansi</a> 
+                @endif
             </nav>
 
             <div class="ml-auto flex items-center gap-3 text-sm">
@@ -43,7 +45,7 @@
 
     <footer class="bg-brand text-white/90 text-xs">
         <div class="mx-auto max-w-7xl px-4 py-4 flex flex-wrap justify-between gap-2">
-            <span>Katalog daring, pembelian langsung di toko.</span>
+            <span>Gadgetkuori.com Toko Online Gadget Terpercaya</span>
             <span>© 2026 Gadgetkuori</span>
         </div>
     </footer>

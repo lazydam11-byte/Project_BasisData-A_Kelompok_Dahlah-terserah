@@ -17,6 +17,19 @@ class Pegawai extends Authenticatable
 
     public const KELOLA_TRANSAKSI = ['Manajer', 'Kasir'];
 
+    public const KELOLA_LAPORAN = ['Manajer'];
+
+    public const KELOLA_KLAIM = ['Manajer', 'Teknisi'];
+
+    public function bisaKelolaKlaim(): bool
+    {
+        return in_array($this->jabatan, self::KELOLA_KLAIM, true);
+    }
+    public function bisaLihatLaporan(): bool
+    {
+        return in_array($this->jabatan, self::KELOLA_LAPORAN, true);
+    }
+
     protected $table = 'pegawai';
     protected $primaryKey = 'id_pegawai';
 
