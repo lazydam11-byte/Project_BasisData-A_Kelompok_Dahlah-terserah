@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class TransaksiPenjualan extends Model
 {
-    public const METODE = ['Transfer Bank', 'QRIS', 'Bayar di Toko'];
+    public const METODE = ['Transfer Bank', 'QRIS'];
 
     public const BELUM_DIBAYAR = 'Belum Dibayar';
     public const LUNAS = 'Lunas';
