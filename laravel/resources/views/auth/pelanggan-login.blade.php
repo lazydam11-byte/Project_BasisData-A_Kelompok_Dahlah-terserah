@@ -57,11 +57,6 @@
             <a href="{{ route('katalog.index') }}" class="block w-full rounded-lg border border-brand py-2.5 text-center font-semibold text-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand">Lanjut sebagai tamu</a>
             <p class="mt-4 text-center text-sm text-slate-600">Belum punya akun? <a href="{{ route('daftar') }}" class="font-semibold text-brand hover:underline">Daftar sekarang</a></p>
 
-            <div class="my-4 flex items-center gap-3 text-xs text-slate-400">
-                <hr class="flex-1"><span>atau</span>
-                <hr class="flex-1">
-            </div>
-            <a href="{{ route('katalog') }}" class="block w-full rounded-lg border border-brand py-2.5 text-center font-semibold text-brand hover:bg-brand-soft focus:outline-none focus:ring-2 focus:ring-brand">Lanjut sebagai tamu</a>
             <p class="mt-2 text-center text-xs text-slate-500">Katalog dan informasi stok dapat dilihat tanpa masuk.</p>
         </section>
     </main>
