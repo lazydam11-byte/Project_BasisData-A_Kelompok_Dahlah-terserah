@@ -451,19 +451,3 @@ php artisan serve
 Akun contoh dari seeder (password `password123`): pegawai `admin.ahmad` (Manajer), `budi.santoso` (Kasir), `teknisi.doni` (Teknisi), `gudang.hendra` (Gudang); pelanggan `andi.pratama@email.com`. Login pegawai di `/pegawai/login`. Tarif dan estimasi kurir diubah di `config/pengiriman.php`.
 
 ---
-
-## Lampiran A. Perubahan terhadap PRD Sebelumnya
-
-Versi ini disesuaikan dengan aplikasi revisi (Gadgetkuori.com). Perubahan utamanya:
-
-| Bagian | Perubahan |
-|---|---|
-| Tabel Tukar Tambah | Dihapus dari struktur dan fungsional karena tidak ada pada aplikasi revisi; dipindahkan ke daftar yang tidak termasuk sistem. |
-| Kolom `diskon` dan `sub_total` | Kolom diskon tidak ada pada aplikasi; rumus subtotal menjadi jumlah dikalikan harga satuan, dan kolom bernama `subtotal`. |
-| Tabel Pengiriman | Ditambahkan (sebelumnya pengiriman barang dinyatakan di luar ruang lingkup). Total pembayaran kini mencakup ongkos kirim. |
-| Tabel Produk | Ditambah `lama_garansi`, `tanggal_masuk`, dan `foto_produk`. |
-| Tabel Pelanggan | Ditambah `username`; email bersifat unik dan dipakai untuk login. |
-| Tabel Transaksi Penjualan | Ditambah `bukti_pembayaran`; status pembayaran: Belum Dibayar, Lunas, Dibatalkan. |
-| Pengguna | Pegawai, Pengelola Toko, dan Pemilik Toko diganti Pelanggan, Manajer, Kasir, Teknisi, dan Gudang sesuai hak akses aplikasi. |
-| Alur proses | Penjualan kini online (katalog, keranjang, checkout, bukti pembayaran) dan proses tukar tambah diganti proses pengiriman. |
-| Notasi ERD | Notasi Chen diganti crow's foot agar sama dengan berkas draw.io. |
