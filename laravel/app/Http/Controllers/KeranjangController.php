@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pengiriman;
 use App\Models\Produk;
 use App\Models\TransaksiPenjualan;
 use Illuminate\Http\Request;
@@ -27,6 +28,8 @@ class KeranjangController extends Controller
             'baris'  => $baris,
             'total'  => $baris->sum('subtotal'),
             'metode' => TransaksiPenjualan::METODE,
+            'kurir'  => Pengiriman::daftarKurir(),
+            'pelanggan' => auth('pelanggan')->user(),
         ]);
     }
 

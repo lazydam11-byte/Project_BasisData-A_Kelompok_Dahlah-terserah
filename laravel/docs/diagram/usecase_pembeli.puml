@@ -1,0 +1,52 @@
+@startuml UseCase_Pembeli
+title Use Case Diagram Sisi Pembeli - Gadgetkuori.com
+left to right direction
+skinparam dpi 150
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #EAF2FB
+  BorderColor #1F3A5F
+}
+skinparam ArrowColor #1F3A5F
+
+actor "Pengunjung" as Tamu
+actor "Pelanggan" as Pel
+Pel --|> Tamu
+
+rectangle "Gadgetkuori.com" {
+  usecase "Melihat beranda" as U1
+  usecase "Melihat katalog\n(cari & filter)" as U2
+  usecase "Mengelola keranjang" as U3
+  usecase "Mendaftar akun" as U4
+  usecase "Login pelanggan" as U5
+  usecase "Checkout & pilih\nmetode pembayaran" as U6
+  usecase "Mengunggah bukti\npembayaran" as U7
+  usecase "Membatalkan pesanan" as U8
+  usecase "Melihat riwayat &\ndetail pesanan" as U9
+  usecase "Melihat garansi" as U10
+  usecase "Mengisi alamat &\nmemilih kurir" as U12
+  usecase "Melacak pengiriman\n(status & no. resi)" as U13
+  usecase "Mengonfirmasi pesanan\nditerima" as U14
+  usecase "Mengajukan klaim\ngaransi" as U11
+}
+
+Tamu --> U1
+Tamu --> U2
+Tamu --> U3
+Tamu --> U4
+Tamu --> U5
+Pel --> U6
+Pel --> U7
+Pel --> U8
+Pel --> U9
+Pel --> U10
+Pel --> U11
+Pel --> U13
+Pel --> U14
+U12 ..> U6 : <<extend>>
+U6 ..> U3 : <<include>>
+U6 ..> U5 : <<include>>
+U11 ..> U10 : <<include>>
+@enduml

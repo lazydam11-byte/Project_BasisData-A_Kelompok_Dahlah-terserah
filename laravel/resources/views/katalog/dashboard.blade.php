@@ -150,7 +150,7 @@
             </div>
             <h3 class="font-bold text-slate-800">Garansi Produk</h3>
             <p class="mt-2 text-sm leading-relaxed text-slate-500">
-                Setiap produk dilengkapi garansi untuk memberikan rasa aman dan nyaman saat berbelanja.
+                Garansi terbit otomatis setelah pembayaran dikonfirmasi lunas, sesuai masa garansi tiap produk.
             </p>
         </div>
 
@@ -166,11 +166,11 @@
 
         <div class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-purple-300 hover:shadow-lg">
             <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-purple-100 text-purple-600 transition group-hover:bg-purple-600 group-hover:text-white">
-                <i class="fa-solid fa-headset text-2xl"></i>
+                <i class="fa-solid fa-receipt text-2xl"></i>
             </div>
-            <h3 class="font-bold text-slate-800">Konsultasi Pelanggan</h3>
+            <h3 class="font-bold text-slate-800">Pesanan Terpantau</h3>
             <p class="mt-2 text-sm leading-relaxed text-slate-500">
-                Dapatkan bantuan dan informasi produk untuk membantu menentukan pilihan gadget.
+                Pantau status pembayaran dan pengiriman (lengkap dengan nomor resi), unggah bukti transfer, dan lihat riwayat belanja.
             </p>
         </div>
 
@@ -178,9 +178,9 @@
             <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600 transition group-hover:bg-orange-500 group-hover:text-white">
                 <i class="fa-solid fa-screwdriver-wrench text-2xl"></i>
             </div>
-            <h3 class="font-bold text-slate-800">Layanan Servis</h3>
+            <h3 class="font-bold text-slate-800">Klaim Garansi Online</h3>
             <p class="mt-2 text-sm leading-relaxed text-slate-500">
-                Tersedia layanan pengecekan dan perbaikan perangkat oleh teknisi.
+                Ajukan klaim garansi dari akun Anda dan pantau penanganannya oleh teknisi.
             </p>
         </div>
 

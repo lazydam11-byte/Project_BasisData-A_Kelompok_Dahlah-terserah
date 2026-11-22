@@ -40,6 +40,7 @@ Route::get('/daftar', [PelangganRegisterController::class, 'showRegisterForm'])-
 Route::post('/daftar', [PelangganRegisterController::class, 'register'])->middleware('throttle:10,1')->name('daftar.proses');
 Route::get('/', fn() => redirect()->route('pegawai.login'));
 Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog.index');
+Route::view('/tentang', 'tentang')->name('tentang');
 Route::get('/login', [PelangganLoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [PelangganLoginController::class, 'login'])->name('login.proses');
 Route::post('/logout', [PelangganLoginController::class, 'logout'])->name('logout');

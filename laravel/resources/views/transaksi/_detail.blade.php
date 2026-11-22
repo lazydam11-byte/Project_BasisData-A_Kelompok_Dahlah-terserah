@@ -19,6 +19,16 @@
             @endforeach
         </tbody>
         <tfoot>
+            @if ($transaksi->pengiriman)
+                <tr class="border-t border-slate-200">
+                    <td colspan="3" class="px-4 py-2 text-right text-slate-600">Subtotal produk</td>
+                    <td class="px-4 py-2 text-right">Rp {{ number_format($transaksi->subtotal_produk, 0, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="px-4 py-2 text-right text-slate-600">Ongkos kirim ({{ $transaksi->pengiriman->kurir }})</td>
+                    <td class="px-4 py-2 text-right">Rp {{ number_format($transaksi->pengiriman->ongkir, 0, ',', '.') }}</td>
+                </tr>
+            @endif
             <tr class="border-t border-slate-200">
                 <td colspan="3" class="px-4 py-3 text-right font-semibold">Total bayar</td>
                 <td class="px-4 py-3 text-right font-display text-lg font-bold">Rp {{ number_format($transaksi->total_bayar, 0, ',', '.') }}</td>

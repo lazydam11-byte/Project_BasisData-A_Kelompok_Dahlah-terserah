@@ -22,7 +22,7 @@
                     <tr class="hover:bg-slate-50">
                         <td class="px-4 py-3 font-semibold">#{{ $t->id_transaksi }}</td>
                         <td class="px-4 py-3">{{ $t->tanggal->format('d/m/Y H:i') }}</td>
-                        <td class="px-4 py-3">{{ $t->metode_pembayaran }}</td>
+                        <td class="px-4 py-3">{{ $t->metode_pembayaran }}@if ($t->pengiriman)<br><span class="rounded bg-sky-100 px-1.5 py-0.5 text-xs font-semibold text-sky-800">Kirim · {{ $t->pengiriman->status_pengiriman }}</span>@endif</td>
                         <td class="px-4 py-3">{{ number_format($t->total_bayar, 0, ',', '.') }}</td>
                         <td class="px-4 py-3">@include('transaksi._status', ['transaksi' => $t])</td>
                         <td class="px-4 py-3"><a href="{{ route('pesanan.show', $t) }}" class="rounded bg-brand px-3 py-1 text-xs font-semibold text-white hover:bg-brand-dark">Lihat</a></td>

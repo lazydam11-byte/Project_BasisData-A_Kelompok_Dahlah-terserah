@@ -19,6 +19,9 @@
                 <a href="{{ route('katalog.index') }}"
                    @if (request()->routeIs('katalog.*')) aria-current="page" @endif
                    class="rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white {{ request()->routeIs('katalog.*') ? 'bg-white/20 font-semibold' : 'hover:bg-white/10' }}">Produk</a>
+                <a href="{{ route('tentang') }}"
+                   @if (request()->routeIs('tentang')) aria-current="page" @endif
+                   class="rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white {{ request()->routeIs('tentang') ? 'bg-white/20 font-semibold' : 'hover:bg-white/10' }}">Tentang</a>
                 <a class="rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white {{ request()->routeIs('keranjang.*') ? 'bg-white/20 font-semibold' : 'hover:bg-white/10' }}" href="{{ route('keranjang.index') }}">Keranjang ({{ array_sum(session('keranjang', [])) }}) </a>
                 @if ($pelanggan) 
                     <a class="rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white {{ request()->routeIs('pesanan.*') ? 'bg-white/20 font-semibold' : 'hover:bg-white/10' }}" href="{{ route('pesanan.index') }}">Pesanan saya</a> 

@@ -1,0 +1,56 @@
+@startuml Sequence_Checkout
+title Sequence Diagram: Checkout, Konfirmasi Lunas, dan Pengiriman
+skinparam dpi 150
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam ParticipantBackgroundColor #EAF2FB
+skinparam ParticipantBorderColor #1F3A5F
+skinparam ArrowColor #1F3A5F
+skinparam maxMessageSize 150
+autonumber
+
+actor Pelanggan
+actor "Kasir /\nManajer" as Pegawai
+participant "Pesanan\nController" as PC
+participant "Admin\nTransaksi\nController" as TC
+participant Produk
+participant "Transaksi\nPenjualan" as Trx
+participant "Detail\nPenjualan" as Det
+participant Pengiriman
+participant Garansi
+
+Pelanggan -> PC : POST /pesanan (cara menerima, kurir, alamat, metode_pembayaran)
+activate PC
+PC -> Produk : ambil produk keranjang (lockForUpdate)
+loop setiap item keranjang
+  PC -> Produk : cek stok, hitung subtotal, kurangi stok
+end
+PC -> Trx : create(Belum Dibayar, total_bayar = subtotal + ongkir)
+PC -> Det : createMany(harga_satuan, jumlah, subtotal)
+opt cara menerima = Kirim ke Alamat
+  PC -> Pengiriman : create(penerima, alamat, kurir, ongkir, status = Menunggu Pembayaran)
+end
+PC --> Pelanggan : redirect ke detail pesanan
+deactivate PC
+
+Pelanggan -> PC : POST /pesanan/{id}/bukti
+PC -> Trx : simpan bukti_pembayaran
+
+Pegawai -> TC : PUT /admin/transaksi/{id} (aksi = lunas)
+activate TC
+TC -> Trx : status_pembayaran = Lunas, id_pegawai
+TC -> Garansi : terbitkanUntuk(transaksi)
+TC -> Pengiriman : status = Dikemas
+TC --> Pegawai : konfirmasi berhasil
+deactivate TC
+
+Pegawai -> TC : PUT /admin/transaksi/{id} (aksi = kirim, no_resi)
+activate TC
+TC -> Pengiriman : no_resi, status = Dikirim, tanggal_dikirim
+TC --> Pegawai : paket diserahkan ke kurir
+deactivate TC
+
+Pelanggan -> PC : POST /pesanan/{id}/terima
+PC -> Pengiriman : status = Diterima, tanggal_diterima
+PC --> Pelanggan : pesanan ditandai diterima
+@enduml

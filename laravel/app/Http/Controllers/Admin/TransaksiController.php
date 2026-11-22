@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Garansi;
+use App\Models\Pengiriman;
 use App\Models\TransaksiPenjualan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,7 @@ class TransaksiController extends Controller
 {
     public function index(Request $request)
     {
-        $transaksi = TransaksiPenjualan::with('pelanggan')
+        $transaksi = TransaksiPenjualan::with(['pelanggan', 'pengiriman'])
             ->when($request->status, fn ($q, $s) => $q->where('status_pembayaran', $s))
             ->when($request->q, function ($query, $q) {
                 $query->where(function ($w) use ($q) {
@@ -33,19 +34,23 @@ class TransaksiController extends Controller
 
     public function show(TransaksiPenjualan $transaksi)
     {
-        $transaksi->load(['pelanggan', 'pegawai', 'detail.produk']);
+        $transaksi->load(['pelanggan', 'pegawai', 'detail.produk', 'pengiriman']);
 
         return view('admin.transaksi.show', compact('transaksi'));
     }
 
-    /** Konfirmasi pembayaran ('lunas') atau batalkan pesanan ('batal'). */
+    /** Konfirmasi pembayaran ('lunas'), batalkan pesanan ('batal'), atau serahkan ke kurir ('kirim'). */
     public function update(Request $request, TransaksiPenjualan $transaksi)
     {
         $aksi = $request->validate([
-            'aksi' => ['required', Rule::in(['lunas', 'batal'])],
+            'aksi' => ['required', Rule::in(['lunas', 'batal', 'kirim'])],
         ])['aksi'];
 
         $idPegawai = auth('pegawai')->id();
+
+        if ($aksi === 'kirim') {
+            return $this->kirim($request, $transaksi);
+        }
 
         if (! $transaksi->bisaDiproses()) {
             return back()->with('error', 'Hanya pesanan berstatus Belum Dibayar yang bisa diproses.');
@@ -56,11 +61,13 @@ class TransaksiController extends Controller
             DB::transaction(function () use ($transaksi, $idPegawai) {
                 $transaksi->update([
                     'status_pembayaran' => TransaksiPenjualan::LUNAS,
-                    'status_pengiriman' => TransaksiPenjualan::KIRIM_DIKEMAS,   // ← BARU
                     'id_pegawai'        => $idPegawai,
                 ]);
 
                 Garansi::terbitkanUntuk($transaksi);
+
+                // Pesanan yang dikirim masuk tahap dikemas setelah lunas
+                $transaksi->pengiriman?->update(['status_pengiriman' => Pengiriman::DIKEMAS]);
             });
 
             return back()->with('sukses', 'Pembayaran pesanan #' . $transaksi->id_transaksi . ' dikonfirmasi lunas dan garansi diterbitkan.');
@@ -71,44 +78,30 @@ class TransaksiController extends Controller
         return back()->with('sukses', 'Pesanan #' . $transaksi->id_transaksi . ' dibatalkan dan stok dikembalikan.');
     }
 
-    /** Atur estimasi tiba, kurir, dan nomor resi; atau tandai pesanan sudah dikirim. */   // ← BARU (seluruh method)
-    public function pengiriman(Request $request, TransaksiPenjualan $transaksi)
+    /** Serahkan paket ke kurir: wajib mengisi nomor resi. */
+    private function kirim(Request $request, TransaksiPenjualan $transaksi)
     {
-        if (! $transaksi->bisaDiaturPengirimannya()) {
-            return back()->with('error', 'Pengiriman hanya bisa diatur untuk pesanan yang sudah lunas dan belum diterima.');
-        }
+        $pengiriman = $transaksi->pengiriman;
 
-        $kirim = $request->input('aksi') === 'kirim';
+        if (! $pengiriman
+            || $transaksi->status_pembayaran !== TransaksiPenjualan::LUNAS
+            || $pengiriman->status_pengiriman !== Pengiriman::DIKEMAS) {
+            return back()->with('error', 'Pesanan belum siap dikirim. Syaratnya: dikirim ke alamat, sudah lunas, dan berstatus Dikemas.');
+        }
 
         $data = $request->validate([
-            'aksi'          => ['required', Rule::in(['simpan', 'kirim'])],
-            'estimasi_tiba' => ['required', 'date', 'after_or_equal:' . $transaksi->tanggal->toDateString()],
-            'kurir'         => [Rule::requiredIf($kirim), 'nullable', 'string', 'max:50'],
-            'nomor_resi'    => [Rule::requiredIf($kirim), 'nullable', 'string', 'max:50'],
+            'no_resi' => ['required', 'string', 'max:40', 'regex:/^[A-Za-z0-9\-]+$/'],
         ], [
-            'estimasi_tiba.required'        => 'Isi perkiraan tanggal tiba.',
-            'estimasi_tiba.after_or_equal'  => 'Estimasi tiba tidak boleh lebih awal dari tanggal pesanan.',
-            'kurir.required'                => 'Isi nama kurir untuk menandai pesanan dikirim.',
-            'nomor_resi.required'           => 'Isi nomor resi untuk menandai pesanan dikirim.',
+            'no_resi.required' => 'Nomor resi wajib diisi.',
+            'no_resi.regex'    => 'Nomor resi hanya boleh berisi huruf, angka, dan tanda hubung.',
         ]);
 
-        $nilai = [
-            'estimasi_tiba' => $data['estimasi_tiba'],
-            'kurir'         => $data['kurir'] ?? $transaksi->kurir,
-            'nomor_resi'    => $data['nomor_resi'] ?? $transaksi->nomor_resi,
-        ];
+        $pengiriman->update([
+            'no_resi'           => strtoupper($data['no_resi']),
+            'status_pengiriman' => Pengiriman::DIKIRIM,
+            'tanggal_dikirim'   => now(),
+        ]);
 
-        if ($data['aksi'] === 'kirim') {
-            $nilai['status_pengiriman'] = TransaksiPenjualan::KIRIM_DIKIRIM;
-            $nilai['tanggal_kirim']     = $transaksi->tanggal_kirim?->toDateString() ?? now()->toDateString();
-        } elseif ($transaksi->status_pengiriman === TransaksiPenjualan::KIRIM_MENUNGGU) {
-            $nilai['status_pengiriman'] = TransaksiPenjualan::KIRIM_DIKEMAS; // pesanan lunas sebelum fitur pengiriman ada
-        }
-
-        $transaksi->update($nilai);
-
-        return back()->with('sukses', $data['aksi'] === 'kirim'
-            ? 'Pesanan #' . $transaksi->id_transaksi . ' ditandai sudah dikirim.'
-            : 'Estimasi pengiriman pesanan #' . $transaksi->id_transaksi . ' disimpan.');
+        return back()->with('sukses', 'Pesanan #' . $transaksi->id_transaksi . ' diserahkan ke ' . $pengiriman->kurir . ' dengan resi ' . $pengiriman->no_resi . '.');
     }
 }

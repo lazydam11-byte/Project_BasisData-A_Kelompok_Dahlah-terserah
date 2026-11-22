@@ -1,0 +1,33 @@
+@startuml Activity_Klaim_Garansi
+title Activity Diagram: Pengajuan dan Penanganan Klaim Garansi
+skinparam dpi 150
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam ActivityBackgroundColor #EAF2FB
+skinparam ActivityBorderColor #1F3A5F
+skinparam ArrowColor #1F3A5F
+skinparam wrapWidth 190
+
+|Pelanggan|
+start
+:Membuka daftar garansi;
+:Memilih garansi dan menekan Klaim;
+|Sistem|
+if (Garansi aktif, tidak ada klaim berjalan,\ndan jatah klaim belum habis?) then (ya)
+  |Pelanggan|
+  :Mengisi keluhan dan kondisi barang;
+  |Sistem|
+  :Menyimpan klaim (status Diajukan);
+  |Teknisi / Manajer|
+  :Memproses klaim (status Diproses);
+  if (Klaim dapat ditangani?) then (ya)
+    :Menyelesaikan klaim\ndengan keterangan (Selesai);
+  else (tidak)
+    :Menolak klaim\ndengan keterangan (Ditolak);
+  endif
+else (tidak)
+  |Sistem|
+  :Menolak pengajuan dan menampilkan alasan\n(garansi berakhir, klaim masih berjalan,\natau batas klaim tercapai);
+endif
+stop
+@enduml

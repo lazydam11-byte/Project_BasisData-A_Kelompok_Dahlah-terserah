@@ -146,7 +146,7 @@
                         <td class="px-4 py-3">{{ $t->pelanggan->nama ?? '–' }}</td>
                         <td class="px-4 py-3">{{ $t->metode_pembayaran }}</td>
                         <td class="px-4 py-3">{{ $t->detail->sum('jumlah') }}</td>
-                        <td class="px-4 py-3 text-right">{{ number_format($t->total_bayar, 0, ',', '.') }}</td>
+                        <td class="px-4 py-3 text-right">{{ number_format($t->subtotal_produk, 0, ',', '.') }}</td>
                     </tr>
                 @empty
                     <tr><td colspan="6" class="px-4 py-10 text-center text-slate-500">Belum ada penjualan lunas pada periode ini. Ubah rentang tanggal.</td></tr>

@@ -1,0 +1,168 @@
+@startuml Class_Gadgetkuori
+title Class Diagram Gadgetkuori.com (Model Eloquent)
+hide empty members
+skinparam dpi 150
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #1F3A5F
+  HeaderBackgroundColor #DCE8F7
+}
+skinparam ArrowColor #1F3A5F
+
+class Authenticatable <<Laravel>>
+
+class Pegawai {
+  - id_pegawai : int
+  - nama : string
+  - jabatan : string
+  - username : string
+  - password : string
+  + {static} JABATAN : array
+  + {static} KELOLA_PRODUK : array
+  + {static} KELOLA_PEGAWAI : array
+  + {static} KELOLA_PELANGGAN : array
+  + {static} KELOLA_TRANSAKSI : array
+  + {static} KELOLA_LAPORAN : array
+  + {static} KELOLA_KLAIM : array
+  + bisaKelolaProduk() : bool
+  + bisaKelolaPegawai() : bool
+  + bisaKelolaPelanggan() : bool
+  + bisaKelolaTransaksi() : bool
+  + bisaKelolaKlaim() : bool
+  + bisaLihatLaporan() : bool
+}
+
+class Pelanggan {
+  - id_pelanggan : int
+  - nama : string
+  - alamat : string
+  - no_telepon : string
+  - email : string
+  - username : string
+  - password : string
+}
+
+class Kategori {
+  - id_kategori : int
+  - nama_kategori : string
+  + scopeCari(kata) : Builder
+  + getKodeAttribute() : string
+}
+
+class Merek {
+  - id_merek : int
+  - nama_merek : string
+  - negara_asal : string
+  + scopeCari(kata) : Builder
+  + getKodeAttribute() : string
+}
+
+class Produk {
+  - id_produk : int
+  - id_kategori : int
+  - id_merek : int
+  - nama_produk : string
+  - harga : int
+  - stok : int
+  - lama_garansi : int
+  - tanggal_masuk : date
+  - foto_produk : string
+  + scopeCari(kata) : Builder
+  + getHargaRupiahAttribute() : string
+  + getStatusStokAttribute() : array
+  + getTextGaransiAttribute() : string
+}
+
+class TransaksiPenjualan {
+  - id_transaksi : int
+  - tanggal : datetime
+  - metode_pembayaran : string
+  - status_pembayaran : string
+  - total_bayar : int
+  - bukti_pembayaran : string
+  - id_pelanggan : int
+  - id_pegawai : int
+  + {static} METODE : array
+  + bisaDiproses() : bool
+  + bisaUnggahBukti() : bool
+  + getSubtotalProdukAttribute() : int
+  + batalkan(idPegawai) : bool
+}
+
+class DetailPenjualan {
+  - id_detail : int
+  - id_transaksi : int
+  - id_produk : int
+  - jumlah : int
+  - harga_satuan : int
+  - subtotal : int
+}
+
+class Garansi {
+  - id_garansi : int
+  - id_detail : int
+  - nomor_garansi : string
+  - tanggal_mulai : date
+  - lama_garansi : int
+  - tanggal_berakhir : date
+  - ketentuan_garansi : string
+  + {static} terbitkanUntuk(transaksi) : void
+  + aktif() : bool
+  + sisaHari() : int
+  + klaimTerpakai() : int
+  + jatahKlaimHabis() : bool
+}
+
+class KlaimGaransi {
+  - id_klaim : int
+  - id_garansi : int
+  - id_pegawai : int
+  - tanggal_klaim : date
+  - tanggal_selesai : date
+  - keluhan : string
+  - kondisi_barang : string
+  - status_klaim : string
+  - keterangan : string
+  + masihBerjalan() : bool
+}
+
+class Pengiriman {
+  - id_pengiriman : int
+  - id_transaksi : int
+  - nama_penerima : string
+  - telepon_penerima : string
+  - alamat_tujuan : string
+  - kurir : string
+  - ongkir : int
+  - no_resi : string
+  - status_pengiriman : string
+  - tanggal_dikirim : datetime
+  - tanggal_diterima : datetime
+  + {static} CARA, TAHAPAN : array
+  + {static} daftarKurir() : array
+  + posisiTahap() : int
+}
+
+class Qris <<Service>> {
+  + {static} dinamis(statis, nominal) : string
+}
+
+Authenticatable <|-- Pegawai
+Authenticatable <|-- Pelanggan
+
+Kategori "1" -- "0..*" Produk
+Merek "1" -- "0..*" Produk
+Pelanggan "1" -- "0..*" TransaksiPenjualan : melakukan
+Pegawai "0..1" -- "0..*" TransaksiPenjualan : memproses
+TransaksiPenjualan "1" *-- "1..*" DetailPenjualan
+Produk "1" -- "0..*" DetailPenjualan
+DetailPenjualan "1" -- "0..1" Garansi : menerbitkan
+Garansi "1" *-- "0..*" KlaimGaransi
+Pegawai "0..1" -- "0..*" KlaimGaransi : menangani
+TransaksiPenjualan "1" -- "0..1" Pengiriman : dikirim melalui
+TransaksiPenjualan ..> Garansi : <<memicu terbit>>
+TransaksiPenjualan ..> Qris : <<QRIS dinamis>>
+@enduml

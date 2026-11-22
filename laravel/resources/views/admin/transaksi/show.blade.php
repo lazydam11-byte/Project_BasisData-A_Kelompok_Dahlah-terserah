@@ -102,6 +102,12 @@
             </div>
         @endif
 
+        @if ($transaksi->pengiriman)
+            @include('admin.transaksi._pengiriman', ['transaksi' => $transaksi, 'pengiriman' => $transaksi->pengiriman])
+        @else
+            <p class="mt-4 border-t border-slate-100 pt-4 text-sm text-slate-600">Cara menerima: <span class="font-semibold">ambil di toko</span>.</p>
+        @endif
+
         @if ($transaksi->bisaDiproses())
             <div class="mt-4 flex flex-col gap-2">
                 <form method="POST" action="{{ route('admin.transaksi.update', $transaksi) }}" onsubmit="return confirm('Konfirmasi pesanan ini sudah dibayar lunas?')">

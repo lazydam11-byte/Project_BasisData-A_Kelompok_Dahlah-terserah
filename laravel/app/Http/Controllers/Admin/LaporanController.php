@@ -44,7 +44,7 @@ class LaporanController extends Controller
             fputcsv($out, ['Metode', $filter['metode'] ?? 'Semua'], ';');
             fwrite($out, "\n");
 
-            fputcsv($out, ['No. Transaksi', 'Tanggal', 'Pelanggan', 'Metode', 'Unit', 'Total (Rp)', 'Diproses oleh'], ';');
+            fputcsv($out, ['No. Transaksi', 'Tanggal', 'Pelanggan', 'Metode', 'Unit', 'Total Produk (Rp)', 'Diproses oleh'], ';');
 
             foreach ($transaksi as $t) {
                 fputcsv($out, [
@@ -53,7 +53,7 @@ class LaporanController extends Controller
                     $this->aman($t->pelanggan->nama ?? '-'),
                     $t->metode_pembayaran,
                     $t->detail->sum('jumlah'),
-                    $t->total_bayar,
+                    $t->subtotal_produk,
                     $this->aman($t->pegawai->nama ?? '-'),
                 ], ';');
             }
@@ -88,7 +88,7 @@ class LaporanController extends Controller
 
     private function ambilTransaksi(array $filter)
     {
-        return TransaksiPenjualan::with(['pelanggan', 'pegawai', 'detail.produk'])
+        return TransaksiPenjualan::with(['pelanggan', 'pegawai', 'detail.produk', 'pengiriman'])
             ->where('status_pembayaran', TransaksiPenjualan::LUNAS)
             ->whereDate('tanggal', '>=', $filter['dari'])
             ->whereDate('tanggal', '<=', $filter['sampai'])
@@ -100,7 +100,7 @@ class LaporanController extends Controller
     private function ringkasan($transaksi): array
     {
         $jumlah     = $transaksi->count();
-        $pendapatan = (int) $transaksi->sum('total_bayar');
+        $pendapatan = (int) $transaksi->sum('subtotal_produk');
 
         return [
             'jumlah_transaksi' => $jumlah,
@@ -113,7 +113,7 @@ class LaporanController extends Controller
     private function perMetode($transaksi)
     {
         return $transaksi->groupBy('metode_pembayaran')
-            ->map(fn ($g) => ['jumlah' => $g->count(), 'total' => (int) $g->sum('total_bayar')])
+            ->map(fn ($g) => ['jumlah' => $g->count(), 'total' => (int) $g->sum('subtotal_produk')])
             ->sortByDesc('total');
     }
 

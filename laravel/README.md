@@ -1,66 +1,78 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Gadgetkuori.com
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistem informasi penjualan gadget berbasis web (Laravel 10 + MySQL) untuk Project Basis Data Kelas A, Kelompok Dahlah-terserah.
 
-## About Laravel
+## 1. Latar Belakang
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Gadget (smartphone, laptop, tablet, aksesori, smartwatch) adalah barang bernilai tinggi dengan harga yang sering berubah, stok terbatas, dan masa garansi yang menjadi pertimbangan utama pembeli. Toko gadget perlu mencatat data produk, stok, pelanggan, transaksi, pembayaran, dan garansi sekaligus. Bila dilakukan manual dan pembeli harus datang ke toko hanya untuk menanyakan harga dan stok, proses menjadi lambat dan rawan salah. Gadgetkuori.com dibangun sebagai toko online dengan basis data relasional yang menyatukan seluruh data tersebut, dengan pembagian peran untuk Manajer, Kasir, Teknisi, dan Gudang. Pembeli dapat mengambil pesanan di toko atau meminta pesanan dikirim ke alamatnya lewat kurir.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 2. Permasalahan
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. Informasi harga, merek, dan stok produk tidak mudah diakses pembeli.
+2. Pencatatan stok dan transaksi manual: total salah hitung, stok tidak sinkron, barang bisa terjual ganda.
+3. Bukti pembayaran tidak terhubung ke pesanan sehingga sulit diverifikasi.
+4. Garansi sulit dilacak: masa berlaku, ketentuan, dan jumlah klaim tidak tercatat rapi.
+5. Tidak ada pembagian wewenang antar pegawai.
+6. Laporan penjualan dan pemantauan stok menipis dilakukan manual.
+7. Pembeli di luar kota tidak bisa menerima barang tanpa datang ke toko, dan pengiriman manual tidak tercatat (alamat, kurir, resi, status).
 
-## Learning Laravel
+## 3. Solusi
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Aplikasi web penjualan gadget dengan sepuluh tabel yang saling berelasi (`pegawai`, `pelanggan`, `kategori`, `merek`, `produk`, `transaksi_penjualan`, `detail_penjualan`, `pengiriman`, `garansi`, `klaim_garansi`).
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+| Permasalahan | Solusi pada aplikasi |
+|---|---|
+| Informasi produk sulit diakses | Katalog publik dengan pencarian, filter, dan status stok |
+| Pencatatan manual | Checkout otomatis; stok dikurangi saat pesanan dibuat, dikembalikan saat batal; baris produk dikunci (`lockForUpdate`) agar tidak terjual ganda |
+| Pembayaran sulit diverifikasi | Transfer Bank, QRIS dinamis, Bayar di Toko; unggah bukti; konfirmasi lunas oleh pegawai |
+| Garansi sulit dilacak | Garansi terbit otomatis saat lunas; nomor, masa berlaku, ketentuan, klaim berstatus |
+| Tidak ada pembagian wewenang | Middleware `CekJabatan` berdasarkan jabatan pegawai |
+| Laporan manual | Dashboard stok dan laporan penjualan (unduh CSV) |
+| Pengiriman tidak tercatat | Pilihan Ambil di Toko / Kirim ke Alamat, ongkir otomatis per kurir (`config/pengiriman.php`), nomor resi, pelacakan status, konfirmasi diterima |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 4. Fitur
 
-## Laravel Sponsors
+**Pengunjung dan pelanggan**
+- Beranda, katalog (cari, filter kategori dan merek, hanya stok tersedia)
+- Keranjang belanja (tambah, ubah jumlah, hapus)
+- Daftar akun dan login (email)
+- Checkout: pilih ambil di toko atau kirim ke alamat (penerima, alamat, kurir, ongkir otomatis), pilih metode pembayaran, unggah bukti, batalkan pesanan
+- Pelacakan pengiriman (Menunggu Pembayaran, Dikemas, Dikirim, Diterima), nomor resi, dan tombol "Pesanan sudah saya terima"
+- Riwayat dan detail pesanan (QRIS dinamis)
+- Daftar garansi dan pengajuan klaim (satu klaim berjalan, batas klaim per garansi diatur di `config/garansi.php`)
+- Halaman Tentang (`/tentang`)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+**Pegawai**
 
-### Premium Partners
+| Jabatan | Hak akses |
+|---|---|
+| Semua pegawai | Login, dashboard stok, lihat produk, kategori, merek |
+| Manajer, Gudang | Kelola produk, kategori, merek |
+| Manajer | Kelola pegawai, laporan penjualan dan CSV |
+| Manajer, Kasir | Kelola pelanggan (tanpa hapus), konfirmasi lunas atau batalkan transaksi, serahkan paket ke kurir (isi nomor resi) |
+| Manajer, Teknisi | Proses, selesaikan, atau tolak klaim garansi |
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## Menjalankan
 
-## Contributing
+```bash
+composer install
+cp .env.example .env        # lalu atur DB_DATABASE, NAMA_TOKO, QRIS_STATIS, REKENING_TOKO
+php artisan key:generate
+php artisan migrate --seed   # jika database sudah ada: php artisan migrate (menambah tabel pengiriman)
+php artisan storage:link
+php artisan serve
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Akun contoh dari seeder (password `password123`): pegawai `admin.ahmad` (Manajer), `budi.santoso` (Kasir), `teknisi.doni` (Teknisi), `gudang.hendra` (Gudang); pelanggan `andi.pratama@email.com`. Login pegawai di `/pegawai/login`.
 
-## Code of Conduct
+## Alur pengiriman (versi online)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Pelanggan memilih **Kirim ke alamat** saat checkout, mengisi penerima dan alamat, memilih kurir; ongkir ditambahkan otomatis ke total. Pesanan yang dikirim hanya bisa dibayar lewat Transfer Bank atau QRIS.
+2. Pesanan masuk status pengiriman **Menunggu Pembayaran**. Setelah pegawai mengonfirmasi lunas, status menjadi **Dikemas** (garansi terbit bersamaan).
+3. Kasir atau Manajer menyerahkan paket ke kurir dan mengisi nomor resi; status menjadi **Dikirim**.
+4. Pelanggan melacak status dan nomor resi di halaman pesanan, lalu menekan **Pesanan sudah saya terima**; status menjadi **Diterima**.
+5. Pesanan lama tanpa data pengiriman dianggap ambil di toko. Pendapatan pada laporan penjualan dihitung dari produk saja (tanpa ongkir).
 
-## Security Vulnerabilities
+## Diagram
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+ERD dan diagram UML ada di folder `docs/diagram/`.

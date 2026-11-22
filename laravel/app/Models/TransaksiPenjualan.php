@@ -49,6 +49,18 @@ class TransaksiPenjualan extends Model
         return $this->hasMany(DetailPenjualan::class, 'id_transaksi', 'id_transaksi');
     }
 
+    /** Ada baris pengiriman = pesanan dikirim; tidak ada = diambil di toko. */
+    public function pengiriman()
+    {
+        return $this->hasOne(Pengiriman::class, 'id_transaksi', 'id_transaksi');
+    }
+
+    /** Nilai penjualan produk saja (total bayar dikurangi ongkos kirim). */
+    public function getSubtotalProdukAttribute(): int
+    {
+        return (int) $this->total_bayar - (int) ($this->pengiriman->ongkir ?? 0);
+    }
+
     /** URL foto bukti pembayaran (pakai asset() agar ikut host yang sedang dibuka). */
     public function getBuktiUrlAttribute(): ?string
     {
@@ -98,6 +110,8 @@ class TransaksiPenjualan extends Model
                 'status_pembayaran' => self::DIBATALKAN,
                 'id_pegawai'        => $idPegawai ?? $terkini->id_pegawai,
             ]);
+
+            $terkini->pengiriman?->update(['status_pengiriman' => Pengiriman::DIBATALKAN]);
 
             $this->refresh();
 
