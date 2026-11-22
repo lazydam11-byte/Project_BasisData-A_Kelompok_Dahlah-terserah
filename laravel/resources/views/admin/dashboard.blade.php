@@ -137,7 +137,7 @@
         @endforelse
     </section>
 
-    {{-- Produk terbaru masuk --}}
+    {{-- Produk terbaru --}}
     <section class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm lg:col-span-2">
         <div class="flex items-center justify-between border-b border-slate-200 px-4 py-3">
             <h2 class="font-display font-bold">Baru masuk</h2>
